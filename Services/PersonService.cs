@@ -1,6 +1,8 @@
 ﻿using Entities;
 using ServiceContracts;
 using ServiceContracts.DTO;
+using Services.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace Services
 {
@@ -31,11 +33,10 @@ namespace Services
                 throw new ArgumentNullException(nameof(personAddRequest));
             }
 
-            if (string.IsNullOrEmpty(personAddRequest.Name))
-            {
-                throw new ArgumentException("Person name is blank!!");
-            }
+            //Model validations
+            ValidationHelper.ModelValidation(personAddRequest);
 
+            //Create person
             Person person = personAddRequest.ToPerson();
             person.PersonID = Guid.NewGuid();
 
