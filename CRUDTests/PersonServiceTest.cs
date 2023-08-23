@@ -9,11 +9,14 @@ namespace CRUDTests
     public class PersonServiceTest
     {
         private readonly IPersonServices _personServices;
+        private readonly ICountriesService _countriesService;
 
-        public PersonServiceTest() 
+        public PersonServiceTest()
         {
             _personServices = new PersonService();
+            _countriesService = new CountriesService();
         }
+
 
         #region AddPerson
         [Fact]
@@ -23,7 +26,7 @@ namespace CRUDTests
             PersonAddRequest? personAddRequest = null;
 
             //Assert
-            Assert.Throws<ArgumentNullException>(() => 
+            Assert.Throws<ArgumentNullException>(() =>
                 _personServices.AddPerson(personAddRequest));
         }
 
@@ -35,7 +38,7 @@ namespace CRUDTests
                 Name = null
             };
 
-            Assert.Throws<ArgumentException>(() => 
+            Assert.Throws<ArgumentException>(() =>
                 _personServices.AddPerson(personAddRequest));
         }
 
@@ -61,6 +64,116 @@ namespace CRUDTests
             //Assert
             Assert.True(person_add_response.PersonID != Guid.Empty);
             Assert.Contains(person_add_response, list_actual_person);
+        }
+        #endregion
+
+        #region GetAllPerson
+        [Fact]
+        public void GetAllPerson_EmptyList()
+        {
+            var person_list = _personServices.GetAllPersons();
+
+            Assert.Empty(person_list);
+        }
+
+        [Fact]
+        public void GetAllPerson_ValidList()
+        {
+            //Arrange
+            CountryAddRequest new_country = new CountryAddRequest()
+            {
+                CountryName = "Viet Nam"
+            };
+
+            var country_response = _countriesService.AddCountry(new_country);
+            //Act
+            List<PersonAddRequest> personAddRequests = new List<PersonAddRequest>()
+            {
+                new PersonAddRequest()
+                {
+                    Name = "Viet",
+                    Email = "Email@gmail.com",
+                    DateOfBirth = DateTime.Parse("2003/03/21"),
+                    CountryID = country_response.CountryID,
+                    Address = "VN",
+                    Gender = GenderOptions.Male,
+                    ReceiveNewsLetters = true
+                },
+                new PersonAddRequest()
+                {
+                    Name = "Khoi",
+                    Email = "Email@gmail.com",
+                    DateOfBirth = DateTime.Parse("2003/03/21"),
+                    CountryID = country_response.CountryID,
+                    Address = "VN",
+                    Gender = GenderOptions.Female,
+                    ReceiveNewsLetters = true
+                },
+                new PersonAddRequest()
+                {
+                    Name = "Phong",
+                    Email = "Email@gmail.com",
+                    DateOfBirth = DateTime.Parse("2003/03/21"),
+                    CountryID = country_response.CountryID,
+                    Address = "VN",
+                    Gender = GenderOptions.Male,
+                    ReceiveNewsLetters = true
+                }
+            };
+            List<PersonResponse> personResponses = new List<PersonResponse>();
+            foreach (PersonAddRequest person in personAddRequests)
+            {
+                personResponses.Add(_personServices.AddPerson(person));
+            }
+
+            var actual_person_list = _personServices.GetAllPersons();
+            //Assert
+            foreach (var expected_person in personResponses)
+            {
+                Assert.Contains(expected_person, actual_person_list);
+            }
+        }
+        #endregion
+
+        #region GetPersonByID
+        [Fact]
+        public void GetPersonByID_NullPersonID()
+        {
+            //Arrange
+            Guid? personID = null;
+
+            //Acts
+            var person_response = _personServices.GetPersonByID(personID);
+            //Assert
+            Assert.Null(person_response);
+        }
+
+        [Fact]
+        public void GetPersonByID_ValidPersonID()
+        {
+            //Arrange
+            CountryAddRequest new_country = new CountryAddRequest()
+            {
+                CountryName = "Viet Nam"
+            };
+
+            var country_response = _countriesService.AddCountry(new_country);
+            //Act
+            PersonAddRequest new_person_add_request = new PersonAddRequest()
+            {
+                Name = "Viet",
+                Email = "Email@gmail.com",
+                DateOfBirth = DateTime.Parse("2003/03/21"),
+                CountryID = country_response.CountryID,
+                Address = "VN",
+                Gender = GenderOptions.Male,
+                ReceiveNewsLetters = true
+            };
+            var new_person_add_resopnse = _personServices.AddPerson(new_person_add_request);
+
+            var person_response = _personServices.GetPersonByID(new_person_add_resopnse.PersonID);
+            //Assert
+            Assert.NotNull(person_response);
         }
         #endregion
     }
