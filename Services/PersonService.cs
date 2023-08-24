@@ -60,5 +60,50 @@ namespace Services
 
             return ConvertPersonToPersonResopnse(person);
         }
+
+        public List<PersonResponse> GetFilteredPersons(string searchBy, string? searchString)
+        {
+            List<PersonResponse> allPerson = GetAllPersons();
+            List<PersonResponse> matchingPersons = allPerson;
+
+            if (string.IsNullOrEmpty(searchBy) || string.IsNullOrEmpty(searchString))
+            {
+                return matchingPersons;
+            }
+
+            switch (searchBy)
+            {
+                case nameof(Person.Name):
+                    matchingPersons = allPerson.Where(temp =>
+                        (!string.IsNullOrEmpty(temp.Name)) ?
+                        temp.Name.Contains(searchString, StringComparison.OrdinalIgnoreCase) : true).ToList();
+                    break;
+
+                case nameof(Person.Email):
+                    matchingPersons = allPerson.Where(temp =>
+                        (!string.IsNullOrEmpty(temp.Email)) ?
+                        temp.Email.Contains(searchString, StringComparison.OrdinalIgnoreCase) : true).ToList();
+                    break;
+
+                case nameof(Person.DateOfBirth):
+                    matchingPersons = allPerson.Where(temp =>
+                        (temp.DateOfBirth != null) ?
+                        temp.DateOfBirth.Value.ToString("dd MM yyyy").Contains(searchString, StringComparison.OrdinalIgnoreCase) : true).ToList();
+                    break;
+
+                case nameof(Person.Gender):
+                    matchingPersons = allPerson.Where(temp =>
+                        (!string.IsNullOrEmpty(temp.Gender)) ?
+                        temp.Gender.StartsWith(searchString, StringComparison.OrdinalIgnoreCase) : true).ToList();
+                    break;
+                case nameof(Person.CountryID):
+                    matchingPersons = allPerson.Where(temp =>
+                        (!string.IsNullOrEmpty(temp.Country)) ?
+                        temp.Country.Contains(searchString, StringComparison.OrdinalIgnoreCase) : true).ToList();
+                    break;
+                default: matchingPersons = allPerson; break;
+            }
+            return matchingPersons;
+        }
     }
 }
