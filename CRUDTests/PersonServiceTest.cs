@@ -3,6 +3,7 @@ using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace CRUDTests
 {
@@ -10,11 +11,13 @@ namespace CRUDTests
     {
         private readonly IPersonServices _personServices;
         private readonly ICountriesService _countriesService;
+        private readonly ITestOutputHelper _outputHelper;
 
-        public PersonServiceTest()
+        public PersonServiceTest(ITestOutputHelper testOutputHelper)
         {
             _personServices = new PersonService();
             _countriesService = new CountriesService();
+            _outputHelper = testOutputHelper;
         }
 
 
@@ -60,7 +63,10 @@ namespace CRUDTests
             //Act
             var person_add_response = _personServices.AddPerson(personAddRequest);
             var list_actual_person = _personServices.GetAllPersons();
-
+            //print person_add_response
+            _outputHelper.WriteLine($"Expected: {person_add_response}");
+            //print the list are added
+            _outputHelper.WriteLine($"Actual: {list_actual_person.FirstOrDefault()}");
             //Assert
             Assert.True(person_add_response.PersonID != Guid.Empty);
             Assert.Contains(person_add_response, list_actual_person);
@@ -125,8 +131,19 @@ namespace CRUDTests
             {
                 personResponses.Add(_personServices.AddPerson(person));
             }
-
+            //print the personResponses
+            _outputHelper.WriteLine("Expected: ");
+            foreach (PersonResponse personResponse in personResponses)
+            {
+                _outputHelper.WriteLine(personResponse.ToString());
+            }
+            //print th actual_person_list
             var actual_person_list = _personServices.GetAllPersons();
+            _outputHelper.WriteLine("Atual: ");
+            foreach (PersonResponse personResponse in actual_person_list)
+            {
+                _outputHelper.WriteLine(personResponse.ToString());
+            }
             //Assert
             foreach (var expected_person in personResponses)
             {
