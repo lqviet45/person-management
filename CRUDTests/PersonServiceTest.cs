@@ -410,12 +410,14 @@ namespace CRUDTests
             PersonResponse personUpdateResponse = 
                 _personServices.UpdetePerson(personUpdateRequest);
             //print the list
+            _outputHelper.WriteLine("Before Update: ");
             foreach (var person in personList)
             {
                 _outputHelper.WriteLine(person.ToString());
             }
             //print the updeted list
             var list_after_update = _personServices.GetAllPersons();
+            _outputHelper.WriteLine("After Update: ");
             foreach (var person in list_after_update) 
             {
                 _outputHelper.WriteLine(person.ToString());
