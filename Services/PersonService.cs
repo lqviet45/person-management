@@ -1,6 +1,7 @@
 ﻿using Entities;
 using ServiceContracts;
 using ServiceContracts.DTO;
+using ServiceContracts.Enums;
 using Services.Helpers;
 using System.ComponentModel.DataAnnotations;
 
@@ -104,6 +105,36 @@ namespace Services
                 default: matchingPersons = allPerson; break;
             }
             return matchingPersons;
+        }
+
+        public List<PersonResponse> GetSortedPersons(List<PersonResponse> allPersons, string sortBy, SortOrderOptions sortOrder)
+        {
+            if (string.IsNullOrEmpty(sortBy))
+                return allPersons;
+
+            List<PersonResponse> sortedPersons = (sortBy, sortOrder)
+            switch
+            {
+                (nameof(PersonResponse.Name), SortOrderOptions.ASC)
+                => allPersons.OrderBy(temp => temp.Name,
+                StringComparer.OrdinalIgnoreCase).ToList(),
+
+                (nameof(PersonResponse.Name), SortOrderOptions.DESC)
+                => allPersons.OrderByDescending(temp => temp.Name,
+                StringComparer.OrdinalIgnoreCase).ToList(),
+
+                (nameof(PersonResponse.Email), SortOrderOptions.ASC)
+                => allPersons.OrderBy(temp => temp.Email,
+                StringComparer.OrdinalIgnoreCase).ToList(),
+
+                (nameof(PersonResponse.Email), SortOrderOptions.DESC)
+                => allPersons.OrderByDescending(temp => temp.Email,
+                StringComparer.OrdinalIgnoreCase).ToList(),
+
+                _ => allPersons //default case
+            };
+
+            return sortedPersons;
         }
     }
 }

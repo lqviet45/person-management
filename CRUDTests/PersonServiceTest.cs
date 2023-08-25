@@ -1,8 +1,10 @@
 ﻿using Entities;
+using Microsoft.VisualBasic;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services;
+using System.Collections.ObjectModel;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -19,6 +21,58 @@ namespace CRUDTests
             _personServices = new PersonService();
             _countriesService = new CountriesService();
             _outputHelper = testOutputHelper;
+        }
+
+        public List<PersonResponse> CreatedPersons()
+        {
+            CountryAddRequest new_country = new CountryAddRequest()
+            {
+                CountryName = "Viet Nam"
+            };
+
+            var country_response = _countriesService.AddCountry(new_country);
+            List<PersonAddRequest> personAddRequests = new List<PersonAddRequest>()
+            {
+                new PersonAddRequest()
+                {
+                    Name = "Viet",
+                    Email = "Email@gmail.com",
+                    DateOfBirth = DateTime.Parse("2003/03/21"),
+                    CountryID = country_response.CountryID,
+                    Address = "VN",
+                    Gender = GenderOptions.Male,
+                    ReceiveNewsLetters = true
+                },
+                new PersonAddRequest()
+                {
+                    Name = "Khoi",
+                    Email = "Email@gmail.com",
+                    DateOfBirth = DateTime.Parse("2003/03/21"),
+                    CountryID = country_response.CountryID,
+                    Address = "VN",
+                    Gender = GenderOptions.Female,
+                    ReceiveNewsLetters = true
+                },
+                new PersonAddRequest()
+                {
+                    Name = "Phong",
+                    Email = "Email@gmail.com",
+                    DateOfBirth = DateTime.Parse("2003/03/21"),
+                    CountryID = country_response.CountryID,
+                    Address = "VN",
+                    Gender = GenderOptions.Male,
+                    ReceiveNewsLetters = true
+                }
+            };
+
+            List<PersonResponse> personResponses = new List<PersonResponse>();
+
+            foreach (PersonAddRequest person in personAddRequests)
+            {
+                personResponses.Add(_personServices.AddPerson(person));
+            }
+
+            return personResponses;
         }
 
 
@@ -200,53 +254,7 @@ namespace CRUDTests
         public void GetFilteredPersons_EmptySearchString()
         {
             //Arrange
-            CountryAddRequest new_country = new CountryAddRequest()
-            {
-                CountryName = "Viet Nam"
-            };
-
-            var country_response = _countriesService.AddCountry(new_country);
-            //Act
-            List<PersonAddRequest> personAddRequests = new List<PersonAddRequest>()
-            {
-                new PersonAddRequest()
-                {
-                    Name = "Viet",
-                    Email = "Email@gmail.com",
-                    DateOfBirth = DateTime.Parse("2003/03/21"),
-                    CountryID = country_response.CountryID,
-                    Address = "VN",
-                    Gender = GenderOptions.Male,
-                    ReceiveNewsLetters = true
-                },
-                new PersonAddRequest()
-                {
-                    Name = "Khoi",
-                    Email = "Email@gmail.com",
-                    DateOfBirth = DateTime.Parse("2003/03/21"),
-                    CountryID = country_response.CountryID,
-                    Address = "VN",
-                    Gender = GenderOptions.Female,
-                    ReceiveNewsLetters = true
-                },
-                new PersonAddRequest()
-                {
-                    Name = "Phong",
-                    Email = "Email@gmail.com",
-                    DateOfBirth = DateTime.Parse("2003/03/21"),
-                    CountryID = country_response.CountryID,
-                    Address = "VN",
-                    Gender = GenderOptions.Male,
-                    ReceiveNewsLetters = true
-                }
-            };
-
-            List<PersonResponse> personResponses = new List<PersonResponse>();
-
-            foreach (PersonAddRequest person in personAddRequests)
-            {
-                personResponses.Add(_personServices.AddPerson(person));
-            }
+            List<PersonResponse> personResponses = CreatedPersons();
 
             //print the personResponses
             _outputHelper.WriteLine("Expected: ");
@@ -276,53 +284,7 @@ namespace CRUDTests
         public void GetFilteredPersons_AllowSearchString()
         {
             //Arrange
-            CountryAddRequest new_country = new CountryAddRequest()
-            {
-                CountryName = "Viet Nam"
-            };
-
-            var country_response = _countriesService.AddCountry(new_country);
-            //Act
-            List<PersonAddRequest> personAddRequests = new List<PersonAddRequest>()
-            {
-                new PersonAddRequest()
-                {
-                    Name = "Viet",
-                    Email = "Email@gmail.com",
-                    DateOfBirth = DateTime.Parse("2003/03/21"),
-                    CountryID = country_response.CountryID,
-                    Address = "VN",
-                    Gender = GenderOptions.Male,
-                    ReceiveNewsLetters = true
-                },
-                new PersonAddRequest()
-                {
-                    Name = "Khoi",
-                    Email = "Email@gmail.com",
-                    DateOfBirth = DateTime.Parse("2003/03/21"),
-                    CountryID = country_response.CountryID,
-                    Address = "VN",
-                    Gender = GenderOptions.Female,
-                    ReceiveNewsLetters = true
-                },
-                new PersonAddRequest()
-                {
-                    Name = "Phong",
-                    Email = "Email@gmail.com",
-                    DateOfBirth = DateTime.Parse("2003/03/21"),
-                    CountryID = country_response.CountryID,
-                    Address = "VN",
-                    Gender = GenderOptions.Male,
-                    ReceiveNewsLetters = true
-                }
-            };
-
-            List<PersonResponse> personResponses = new List<PersonResponse>();
-
-            foreach (PersonAddRequest person in personAddRequests)
-            {
-                personResponses.Add(_personServices.AddPerson(person));
-            }
+            List<PersonResponse> personResponses = CreatedPersons();
 
             //print the personResponses
             _outputHelper.WriteLine("Expected: ");
@@ -354,6 +316,39 @@ namespace CRUDTests
                         Assert.Contains(expected_person, actual_person_list_search);
                     }
                 }
+            }
+        }
+        #endregion
+
+        #region GetSortedPersons
+        [Fact]
+        public void GetSortedPersons()
+        {
+            //Arrange
+            List<PersonResponse> personResponses = CreatedPersons()
+                .OrderByDescending(temp => temp.Name, StringComparer.OrdinalIgnoreCase).ToList();
+
+            //print the personResponses
+            _outputHelper.WriteLine("Expected: ");
+            foreach (PersonResponse personResponse in personResponses)
+            {
+                _outputHelper.WriteLine(personResponse.ToString());
+            }
+
+            //print th actual_person_list
+            var person_list_sort =
+                _personServices.GetSortedPersons(personResponses, nameof(Person.Name), SortOrderOptions.DESC);
+
+            _outputHelper.WriteLine("Atual: ");
+            foreach (PersonResponse personResponse in person_list_sort)
+            {
+                _outputHelper.WriteLine(personResponse.ToString());
+            }
+
+            //Assert
+            for (int i = 0; i < personResponses.Count; i++)
+            {
+                Assert.Equal(personResponses[i], person_list_sort[i]);
             }
         }
         #endregion
