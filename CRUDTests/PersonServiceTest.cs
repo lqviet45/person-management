@@ -352,5 +352,78 @@ namespace CRUDTests
             }
         }
         #endregion
+
+        #region UpdatePerson
+        [Fact]
+        public void UpdatePerson_NullPersonRequest()
+        {
+            //Arrange
+            PersonUpdateRequest? personUpdateRequest = null;
+            //Assert
+            Assert.Throws<ArgumentNullException>(() =>
+                //Act
+                _personServices.UpdetePerson(personUpdateRequest));
+        }
+
+        [Fact]
+        public void UpdatePerson_InvalidPersonID()
+        {
+            //Arrange
+            PersonUpdateRequest? personUpdateRequest = new PersonUpdateRequest()
+            {
+                PersonID = Guid.NewGuid()
+            };
+            //Assert
+            Assert.Throws<ArgumentException>(() =>
+                //Act
+                _personServices.UpdetePerson(personUpdateRequest));
+        }
+
+        [Fact]
+        public void UpdatePerson_NullPersonName()
+        {
+            var personList = CreatedPersons();
+
+            //Arrange
+            var personUpdateRequest = personList.First().ToPersonUpdateRequest();
+
+            personUpdateRequest.Name = null;
+
+            //Assert
+            Assert.Throws<ArgumentException>(() =>
+                //Act
+                _personServices.UpdetePerson(personUpdateRequest));
+        }
+
+        [Fact]
+        public void UpdatePerson_ValidRequest()
+        {
+            //Arrange
+            var personList = CreatedPersons();
+            if (personList == null) return;
+            //Act
+            PersonUpdateRequest personUpdateRequest = personList.First().ToPersonUpdateRequest();
+
+            personUpdateRequest.Name = "Phuong";
+            personUpdateRequest.Email = "Phuong@gmail.com";
+
+            PersonResponse personUpdateResponse = 
+                _personServices.UpdetePerson(personUpdateRequest);
+            //print the list
+            foreach (var person in personList)
+            {
+                _outputHelper.WriteLine(person.ToString());
+            }
+            //print the updeted list
+            var list_after_update = _personServices.GetAllPersons();
+            foreach (var person in list_after_update) 
+            {
+                _outputHelper.WriteLine(person.ToString());
+            }
+            var person_updeted = _personServices.GetPersonByID(personUpdateRequest.PersonID);
+            //Assert
+            Assert.Equal(person_updeted, personUpdateResponse);
+        }
+        #endregion
     }
 }

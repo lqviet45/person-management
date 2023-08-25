@@ -52,6 +52,21 @@ namespace ServiceContracts.DTO
         {
             return $"Name: {Name}, Email: {Email}, Gender: {Gender}";
         }
+
+        public PersonUpdateRequest ToPersonUpdateRequest()
+        {
+            return new PersonUpdateRequest()
+            {
+                PersonID = PersonID,
+                Name = Name,
+                Email = Email,
+                DateOfBirth = DateOfBirth,
+                Address = Address,
+                ReceiveNewsLetters = ReceiveNewsLetters,
+                CountryID = CountryID,
+                Gender = (GenderOptions) Enum.Parse(typeof(GenderOptions), Gender, true)
+            };
+        }
     }
 
     public static class PersonExtensions
