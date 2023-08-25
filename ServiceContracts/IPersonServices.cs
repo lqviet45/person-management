@@ -61,5 +61,13 @@ namespace ServiceContracts
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
         PersonResponse UpdetePerson(PersonUpdateRequest? personUpdateRequest);
+
+        /// <summary>
+        /// Delete a specified person detals based on the given person ID
+        /// </summary>
+        /// <param name="personID">Person ID to delete</param>
+        /// <returns>True, if the deleteions is successful;
+        /// otherwise return false</returns>
+        bool DeletePerson(Guid? personID);
     }
 }

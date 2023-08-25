@@ -5,6 +5,7 @@ using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services;
 using System.Collections.ObjectModel;
+using System.Runtime.ConstrainedExecution;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -425,6 +426,36 @@ namespace CRUDTests
             var person_updeted = _personServices.GetPersonByID(personUpdateRequest.PersonID);
             //Assert
             Assert.Equal(person_updeted, personUpdateResponse);
+        }
+        #endregion
+
+        #region DeletePerson
+        [Fact]
+        public void DeletePerson_ValidID()
+        {
+            //Arrange
+            List<PersonResponse> people = CreatedPersons();
+            var person = people.First();
+
+            //Act
+            bool isDelete = _personServices.DeletePerson(person.PersonID);
+
+            //Assert
+            Assert.True(isDelete);
+        }
+
+        [Fact]
+        public void DeletePerson_InvalidID()
+        {
+            //Arrange
+            List<PersonResponse> people = CreatedPersons();
+            var person = people.First();
+
+            //Act
+            bool isDelete = _personServices.DeletePerson(Guid.NewGuid());
+
+            //Assert
+            Assert.False(isDelete);
         }
         #endregion
     }
