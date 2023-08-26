@@ -360,6 +360,7 @@ a.link-hover:hover
     border-radius: 8px;
     outline: 3px solid #ffffff;
     font-size: 101%;
+    cursor: pointer;
 }
 
 .button-blue-back

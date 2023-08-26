@@ -12,10 +12,62 @@ namespace Services
         private readonly List<Person> _Persons;
         private readonly ICountriesService _countriesService;
 
-        public PersonService()
+        public PersonService(bool initialize = true)
         {
             _Persons = new List<Person>();
             _countriesService = new CountriesService();
+
+            if (initialize)
+            {
+                //{619E738F-14C2-43BB-A311-9AE6B28BFF83}
+                //{1E72C672-855D-4F13-8253-667BFBB6D234}
+                //{98880235-F4DC-4542-8307-833D8B09D10C}
+                //{DDAF1DCF-83CD-43B4-AD21-4A1B99AD3D7B}
+                _Persons.Add(new Person
+                {
+                    PersonID = Guid.Parse("619E738F-14C2-43BB-A311-9AE6B28BFF83"),
+                    Name = "Viet",
+                    Email = "lqviet455@gmail.com",
+                    Gender = GenderOptions.Male.ToString(),
+                    CountryID = Guid.Parse("2AA96B5F-DF73-4268-83A1-08ABD5CA3C92"),
+                    DateOfBirth = DateTime.Parse("2003/03/21"),
+                    Address = "Dong Nai",
+                    ReceiveNewsLetters = true
+                });
+                _Persons.Add(new Person 
+                {
+                    PersonID = Guid.Parse("1E72C672-855D-4F13-8253-667BFBB6D234"),
+                    Name = "Khoi",
+                    Email = "Khoi@gmail.com",
+                    Gender = GenderOptions.Male.ToString(),
+                    CountryID = Guid.Parse("2AA96B5F-DF73-4268-83A1-08ABD5CA3C92"),
+                    DateOfBirth = DateTime.Parse("2003/03/21"),
+                    Address = "Long An",
+                    ReceiveNewsLetters = true
+                });
+                _Persons.Add(new Person 
+                {
+                    PersonID = Guid.Parse("98880235-F4DC-4542-8307-833D8B09D10C"),
+                    Name = "Phuong",
+                    Email = "Phuong@gmail.com",
+                    Gender = GenderOptions.Male.ToString(),
+                    CountryID = Guid.Parse("417BA260-862D-4388-B2A8-E7B4B3F4A076"),
+                    DateOfBirth = DateTime.Parse("2003/03/21"),
+                    Address = "Bien Hoa",
+                    ReceiveNewsLetters = false
+                });
+                _Persons.Add(new Person 
+                {
+                    PersonID = Guid.Parse("DDAF1DCF-83CD-43B4-AD21-4A1B99AD3D7B"),
+                    Name = "Phong",
+                    Email = "Phong@gmail.com",
+                    Gender = GenderOptions.Male.ToString(),
+                    CountryID = Guid.Parse("417BA260-862D-4388-B2A8-E7B4B3F4A076"),
+                    DateOfBirth = DateTime.Parse("2003/03/21"),
+                    Address = "Ha Noi",
+                    ReceiveNewsLetters = false
+                });
+            }
         }
 
         private PersonResponse ConvertPersonToPersonResopnse(Person person)
@@ -48,7 +100,7 @@ namespace Services
 
         public List<PersonResponse> GetAllPersons()
         {
-            return _Persons.Select(person => person.ToPersonResponse()).ToList();
+            return _Persons.Select(person => ConvertPersonToPersonResopnse(person)).ToList();
         }
 
         public PersonResponse? GetPersonByID(Guid? personID)
@@ -159,7 +211,7 @@ namespace Services
             personUpdate.CountryID = personUpdateRequest.CountryID;
             personUpdate.DateOfBirth = personUpdateRequest.DateOfBirth;
             
-            return personUpdate.ToPersonResponse();
+            return ConvertPersonToPersonResopnse(personUpdate);
         }
 
         public bool DeletePerson(Guid? personID)
