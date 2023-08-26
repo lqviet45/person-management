@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33723.286
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRUDExample", "CRUDExample\CRUDExample.csproj", "{14E8AA99-BE88-4EB2-ACFB-FCFCE12EB000}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PersonManagement", "CRUDExample\PersonManagement.csproj", "{14E8AA99-BE88-4EB2-ACFB-FCFCE12EB000}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CRUDTests", "CRUDTests\CRUDTests.csproj", "{764F629E-C958-4657-9D7B-7BC39D248E53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PersonManagementTest", "CRUDTests\PersonManagementTest.csproj", "{764F629E-C958-4657-9D7B-7BC39D248E53}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Entities", "Entities\Entities.csproj", "{543089A8-0973-4D46-96D5-E85B22CFBC93}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceContracts", "ServiceContracts\ServiceContracts.csproj", "{19548BD7-3080-4DE9-B774-D98CC0FFC3E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services", "Services\Services.csproj", "{B1B8EDDD-A895-49B0-B0DE-5AC67F946431}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{B1B8EDDD-A895-49B0-B0DE-5AC67F946431}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
