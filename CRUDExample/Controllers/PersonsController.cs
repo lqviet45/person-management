@@ -1,5 +1,4 @@
-﻿using Entities;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using ServiceContracts;
 using ServiceContracts.DTO;
 
@@ -20,13 +19,16 @@ namespace CRUDExample.Controllers
         {
             ViewBag.SearchFields = new Dictionary<string, string>()
             {
-                { nameof(Person.Name), "Person Name" },
-                { nameof(Person.Email), "Email" },
-                { nameof(Person.DateOfBirth), "Date Of Birth" },
-                { nameof(Person.Gender), "Gender" },
-                { nameof(Person.CountryID), "Country" }
+                { nameof(PersonResponse.Name), "Person Name" },
+                { nameof(PersonResponse.Email), "Email" },
+                { nameof(PersonResponse.DateOfBirth), "Date Of Birth" },
+                { nameof(PersonResponse.Gender), "Gender" },
+                { nameof(PersonResponse.CountryID), "Country" }
             };
-            List<PersonResponse> personList = _personServices.GetAllPersons();
+
+            List<PersonResponse> personList = _personServices.GetFilteredPersons(searchBy, searchString);
+            ViewBag.SearchBy = searchBy;
+            ViewBag.SearchString = searchString;
 
             return View(personList);
         }
