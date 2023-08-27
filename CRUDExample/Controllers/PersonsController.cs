@@ -5,6 +5,7 @@ using ServiceContracts.Enums;
 
 namespace CRUDExample.Controllers
 {
+    [Route("persons")]
     public class PersonsController : Controller
     {
 
@@ -16,7 +17,7 @@ namespace CRUDExample.Controllers
             _countriesService = countriesService;
         }
 
-        [Route("persons/index")]
+        [Route("index")]
         [Route("/")]
         public IActionResult Index(string searchBy, string? searchString,
             string sortBy = nameof(PersonResponse.Name), SortOrderOptions sortOrder = SortOrderOptions.ASC)
@@ -43,7 +44,7 @@ namespace CRUDExample.Controllers
             return View(sortedPersons);
         }
 
-        [Route("persons/create")]
+        [Route("create")]
         [HttpGet]
         public IActionResult Create()
         {
@@ -54,7 +55,7 @@ namespace CRUDExample.Controllers
         }
 
         [HttpPost]
-        [Route("persons/create")]
+        [Route("create")]
         public IActionResult Create(PersonAddRequest personAddRequest)
         {
             if (!ModelState.IsValid)
