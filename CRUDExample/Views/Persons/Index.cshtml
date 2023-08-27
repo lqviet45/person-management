@@ -5,15 +5,16 @@
 
 <form action="~/persons/index" method="get">
     <h1>Persons</h1>
+    <a href="~/persons/create">Create Person</a>
     <div class="box flex">
         <div class="flex-1">
             <select class="form-input" name="searchBy">
                 @foreach (var field in ViewBag.SearchFields)
                 {
-                    if(field.Key == ViewBag.SearchBy)
+                    if (field.Key == ViewBag.SearchBy)
                     {
                         <option value="@field.Key" selected="selected">@field.Value</option>
-                    } 
+                    }
                     else
                     {
                         <option value="@field.Key">@field.Value</option>
@@ -36,8 +37,15 @@
     <table class="table w-100 mt">
         <thead>
             <tr>
-                <th>Person Name</th>
-                <th>Email</th>
+                @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData) {
+                    {"ColumnName", nameof(PersonResponse.Name)},
+                    {"DisplayName", "Person Name"}
+                })
+
+                @await Html.PartialAsync("_GridColumnHeader", new ViewDataDictionary(ViewData){
+                    {"ColumnName", nameof(PersonResponse.Email)},
+                    {"DisplayName", "Email"}
+                })
                 <th>Date of Birth</th>
                 <th>Age</th>
                 <th>Gender</th>

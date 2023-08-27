@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ServiceContracts;
 using ServiceContracts.DTO;
+using ServiceContracts.Enums;
 
 namespace CRUDExample.Controllers
 {
@@ -8,15 +9,19 @@ namespace CRUDExample.Controllers
     {
 
         private readonly IPersonServices _personServices;
-        public PersonsController(IPersonServices personService) 
+        private readonly ICountriesService _countriesService;
+        public PersonsController(IPersonServices personService, ICountriesService countriesService) 
         {
             _personServices = personService;
+            _countriesService = countriesService;
         }
 
         [Route("persons/index")]
         [Route("/")]
-        public IActionResult Index(string searchBy, string? searchString)
+        public IActionResult Index(string searchBy, string? searchString,
+            string sortBy = nameof(PersonResponse.Name), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
+            //Searching
             ViewBag.SearchFields = new Dictionary<string, string>()
             {
                 { nameof(PersonResponse.Name), "Person Name" },
@@ -30,7 +35,40 @@ namespace CRUDExample.Controllers
             ViewBag.SearchBy = searchBy;
             ViewBag.SearchString = searchString;
 
-            return View(personList);
+            //Sort
+            var sortedPersons = _personServices.GetSortedPersons(personList, sortBy, sortOrder);
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortOrder = sortOrder.ToString();
+
+            return View(sortedPersons);
+        }
+
+        [Route("persons/create")]
+        [HttpGet]
+        public IActionResult Create()
+        {
+            var countriesList = _countriesService.GetAllCountries();
+            ViewBag.Countries = countriesList;
+
+            return View();
+        }
+
+        [HttpPost]
+        [Route("persons/create")]
+        public IActionResult Create(PersonAddRequest personAddRequest)
+        {
+            if (!ModelState.IsValid)
+            {
+                var countriesList = _countriesService.GetAllCountries();
+                ViewBag.Countries = countriesList;
+
+                ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors)
+                                    .Select(e => e.ErrorMessage).ToList();
+                return View();
+            }
+
+            var personResponse = _personServices.AddPerson(personAddRequest);
+            return RedirectToAction("Index", "Persons");
         }
     }
 }
