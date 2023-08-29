@@ -83,5 +83,86 @@ namespace CRUDExample.Controllers
             var personResponse = _personServices.AddPerson(personAddRequest);
             return RedirectToAction("Index", "Persons");
         }
+
+
+        [HttpGet]
+        [Route("edit/{personID}")]
+        public IActionResult Edit(Guid personID)
+        {
+            PersonResponse? personUpdate = _personServices.GetPersonByID(personID);
+
+            if (personUpdate == null)
+            {
+                return RedirectToAction("Index", "Persons");
+            }
+
+            PersonUpdateRequest personUpdateRequest = personUpdate.ToPersonUpdateRequest();
+
+            var countriesList = _countriesService.GetAllCountries();
+            ViewBag.Countries = countriesList
+                .Select(country => new SelectListItem()
+                {
+                    Text = country.CountryName,
+                    Value = country.CountryID.ToString()
+                });
+
+            return View(personUpdateRequest);
+        }
+
+
+        [HttpPost]
+        [Route("edit/{personID}")]
+        public IActionResult Edit(PersonUpdateRequest personUpdateRequest)
+        {
+            var personUpdate = _personServices.GetPersonByID(personUpdateRequest.PersonID);
+            if (personUpdate == null)
+            {
+                return RedirectToAction("Index", "Persons");
+            }
+            if (ModelState.IsValid)
+            {
+                var personUpdated = _personServices.UpdetePerson(personUpdateRequest);
+                return RedirectToAction("Index", "Persons");
+            }
+            else
+            {
+                var countriesList = _countriesService.GetAllCountries();
+                ViewBag.Countries = countriesList
+                    .Select(country => new SelectListItem()
+                    {
+                        Text = country.CountryName,
+                        Value = country.CountryID.ToString()
+                    });
+
+                ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors)
+                                    .Select(e => e.ErrorMessage).ToList();
+                return View(personUpdate.ToPersonUpdateRequest());
+            }
+        }
+
+        [HttpGet]
+        [Route("delete/{personID}")]
+        public IActionResult Delete(Guid? personID)
+        {
+            PersonResponse? personDelete = _personServices.GetPersonByID(personID);
+            if (personDelete == null)
+            {
+                return RedirectToAction("Index", "Persons");
+            }
+            return View(personDelete);
+        }
+
+        [HttpPost]
+        [Route("delete/{personID}")]
+        public IActionResult Delete(PersonUpdateRequest personUpdateRequest)
+        {
+            PersonResponse? person = _personServices.GetPersonByID(personUpdateRequest.PersonID);
+            if (person == null)
+            {
+                return RedirectToAction("Index", "Persons");
+            }
+            var isDeleted = _personServices.DeletePerson(personUpdateRequest.PersonID);
+            return RedirectToAction("Index", "Persons");
+        }
     }
 }
