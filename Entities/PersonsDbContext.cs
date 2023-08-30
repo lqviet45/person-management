@@ -20,18 +20,23 @@ namespace Entities
 
             //Seed to countries
             string countriesJson = System.IO.File.ReadAllText("countries.json");
-            List<Country> countries = System.Text.Json.JsonSerializer.Deserialize<List<Country>>(countriesJson);
-            foreach (Country country in countries)
+            List<Country>? countries = System.Text.Json.JsonSerializer.Deserialize<List<Country>>(countriesJson);
+            if (countries != null)
             {
-                modelBuilder.Entity<Country>().HasData(country);
+                foreach (Country country in countries)
+                {
+                    modelBuilder.Entity<Country>().HasData(country);
+                }
             }
             //Seed to persons
             string personsJson = System.IO.File.ReadAllText("persons.json");
-            List<Person> persons = System.Text.Json.JsonSerializer.Deserialize<List<Person>>(personsJson);
-
-            foreach (Person person in persons)
+            List<Person>? persons = System.Text.Json.JsonSerializer.Deserialize<List<Person>>(personsJson);
+            if (persons != null)
             {
-                modelBuilder.Entity<Person>().HasData(person);
+                foreach (Person person in persons)
+                {
+                    modelBuilder.Entity<Person>().HasData(person);
+                }
             }
 
         }
