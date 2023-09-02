@@ -40,6 +40,15 @@ namespace Entities
                 }
             }
 
+            modelBuilder.Entity<Person>().Property(temp => temp.TIN)
+                .HasColumnName("TaxNumber")
+                .HasColumnType("varchar(8)")
+                .HasDefaultValue("ABC12345");
+            //Make TIN unique
+            //modelBuilder.Entity<Person>().HasIndex(temp => temp.TIN)
+            //    .IsUnique();
+
+            modelBuilder.Entity<Person>().HasCheckConstraint("CHK_TIN", "len([TaxNumber]) = 8");
         }
 
         public List<Person> Sp_GetAllPersons()
