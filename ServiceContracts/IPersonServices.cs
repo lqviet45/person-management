@@ -17,20 +17,20 @@ namespace ServiceContracts
         /// generated PersonID</returns>
         /// <exception cref="ArgumentNullException">When PersonAddRequyest is null</exception>
         /// <exception cref="ArgumentException">Name is null</exception>
-        PersonResponse AddPerson(PersonAddRequest? personAddRequest);
+        Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest);
 
         /// <summary>
         /// Get all the Person in the list of person
         /// </summary>
         /// <returns>a list of Personresponse type</returns>
-        List<PersonResponse> GetAllPersons();
+        Task<List<PersonResponse>> GetAllPersons();
 
         /// <summary>
         /// Get a person by there ID
         /// </summary>
         /// <param name="personID">The ID of person</param>
         /// <returns>Matching person object as PersonResopnse type</returns>
-        PersonResponse? GetPersonByID(Guid? personID);
+        Task<PersonResponse?> GetPersonByID(Guid? personID);
 
         /// <summary>
         /// Returns all person objects that matches with the given 
@@ -40,7 +40,7 @@ namespace ServiceContracts
         /// <param name="searchString">Search string to search</param>
         /// <returns>Returns all matching persons base on given search field 
         /// and search string</returns>
-        List<PersonResponse> GetFilteredPersons(string searchBy, string? searchString);
+        Task<List<PersonResponse>> GetFilteredPersons(string searchBy, string? searchString);
 
         /// <summary>
         /// Returns sorted list of persons
@@ -60,7 +60,7 @@ namespace ServiceContracts
         /// <returns>Returns the person response object updated</returns>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="ArgumentNullException"></exception>
-        PersonResponse UpdetePerson(PersonUpdateRequest? personUpdateRequest);
+        Task<PersonResponse> UpdetePerson(PersonUpdateRequest? personUpdateRequest);
 
         /// <summary>
         /// Delete a specified person detals based on the given person ID
@@ -68,6 +68,6 @@ namespace ServiceContracts
         /// <param name="personID">Person ID to delete</param>
         /// <returns>True, if the deleteions is successful;
         /// otherwise return false</returns>
-        bool DeletePerson(Guid? personID);
+        Task<bool> DeletePerson(Guid? personID);
     }
 }

@@ -16,19 +16,19 @@ namespace ServiceContracts
         /// (including newly generated country id)</returns>
         /// <exception cref="ArgumentNullException">Null Request</exception>
         /// <exception cref="ArgumentException">Invalid Name or ID</exception>
-        CountryResponse AddCountry(CountryAddRequest? countryAddRequest);
+        Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest);
 
         /// <summary>
         /// Get all the countries in the list of countries
         /// </summary>
         /// <returns>A list of countryResponses from the list of counties</returns>
-        IList<CountryResponse> GetAllCountries();
+        Task<IList<CountryResponse>> GetAllCountries();
 
         /// <summary>
         /// Get a country by contry ID
         /// </summary>
         /// <param name="countryID">The ID of the country</param>
         /// <returns>Matching country as CountryResponse</returns>
-        CountryResponse? GetCountryByID(Guid? countryID);
+        Task<CountryResponse?> GetCountryByID(Guid? countryID);
     }
 }

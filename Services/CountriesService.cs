@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 
@@ -13,7 +14,7 @@ namespace Services
             _dbContext = dbContext;
         }
 
-        public CountryResponse AddCountry(CountryAddRequest? countryAddRequest)
+        public async Task<CountryResponse> AddCountry(CountryAddRequest? countryAddRequest)
         {
             if (countryAddRequest == null)
             {
@@ -25,7 +26,7 @@ namespace Services
                 throw new ArgumentException(nameof(countryAddRequest.CountryName));
             }
 
-            if (_dbContext.Countries.Count(temp =>
+            if (await _dbContext.Countries.CountAsync(temp =>
             temp.CountryName == countryAddRequest.CountryName) > 0)
             {
                 throw new ArgumentException("Country name already exist");
@@ -35,26 +36,28 @@ namespace Services
 
             country.CountryID = Guid.NewGuid();
 
-            _dbContext.Countries.Add(country);
+            await _dbContext.Countries.AddAsync(country);
 
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync();
 
             return country.ToCountryResponse();
         }
 
-        public IList<CountryResponse> GetAllCountries()
+        public async Task<IList<CountryResponse>> GetAllCountries()
         {
-            return _dbContext.Countries.Select(country => country.ToCountryResponse()).ToList();
+            return await _dbContext.Countries
+                .Select(country => country.ToCountryResponse()).ToListAsync();
         }
 
-        public CountryResponse? GetCountryByID(Guid? countryID)
+        public async Task<CountryResponse?> GetCountryByID(Guid? countryID)
         {
             if (countryID is null)
             {
                 return null;
             }
 
-            var countryResponse = _dbContext.Countries.FirstOrDefault(temp => temp.CountryID == countryID);
+            var countryResponse = await _dbContext.Countries
+                .FirstOrDefaultAsync(temp => temp.CountryID == countryID);
 
             if (countryResponse == null)
             {

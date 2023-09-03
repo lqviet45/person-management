@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -21,12 +22,12 @@ namespace Services
         {
             PersonResponse personResponse = person.ToPersonResponse();
             personResponse.Country = _countriesService
-                .GetCountryByID(person.CountryID)?.CountryName;
+                .GetCountryByID(person.CountryID).Result?.CountryName;
 
             return personResponse;
         }
 
-        public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
+        public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)
         {
             if (personAddRequest is null)
             {
@@ -40,36 +41,38 @@ namespace Services
             Person person = personAddRequest.ToPerson();
             person.PersonID = Guid.NewGuid();
 
-            //_db.Persons.Add(person);
-
-            //_db.SaveChanges();
-            _db.Sp_InsertPerson(person);
+            _db.Persons.Add(person);
+            
+            await _db.SaveChangesAsync();
+            //_db.Sp_InsertPerson(person);
 
             return ConvertPersonToPersonResopnse(person);
         }
 
-        public List<PersonResponse> GetAllPersons()
+        public async Task<List<PersonResponse>> GetAllPersons()
         {
-            return _db.Persons.ToList()
+            var personList = await _db.Persons.ToListAsync();
+            return personList
                 .Select(person => ConvertPersonToPersonResopnse(person)).ToList();
             //return _db.Sp_GetAllPersons()
             //    .Select(person => ConvertPersonToPersonResopnse(person)).ToList();
         }
 
-        public PersonResponse? GetPersonByID(Guid? personID)
+        public async Task<PersonResponse?> GetPersonByID(Guid? personID)
         {
             if (personID is null) return null;
 
-            var person = _db.Persons.FirstOrDefault(temp => temp.PersonID == personID);
+            var person = await _db.Persons
+                .FirstOrDefaultAsync(temp => temp.PersonID == personID);
 
             if (person == null) return null;
 
             return ConvertPersonToPersonResopnse(person);
         }
 
-        public List<PersonResponse> GetFilteredPersons(string searchBy, string? searchString)
+        public async Task<List<PersonResponse>> GetFilteredPersons(string searchBy, string? searchString)
         {
-            List<PersonResponse> allPerson = GetAllPersons();
+            List<PersonResponse> allPerson = await GetAllPersons();
             List<PersonResponse> matchingPersons = allPerson;
 
             if (string.IsNullOrEmpty(searchBy) || string.IsNullOrEmpty(searchString))
@@ -142,7 +145,7 @@ namespace Services
             return sortedPersons;
         }
 
-        public PersonResponse UpdetePerson(PersonUpdateRequest? personUpdateRequest)
+        public async Task<PersonResponse> UpdetePerson(PersonUpdateRequest? personUpdateRequest)
         {
             //if (personUpdateRequest == null)
             //    throw new ArgumentNullException(nameof(personUpdateRequest));
@@ -151,7 +154,7 @@ namespace Services
 
             ValidationHelper.ModelValidation(personUpdateRequest);
 
-            var personUpdate = _db.Persons.FirstOrDefault(temp
+            var personUpdate = await _db.Persons.FirstOrDefaultAsync(temp
                 => temp.PersonID == personUpdateRequest.PersonID);
 
             if (personUpdate == null)
@@ -166,23 +169,23 @@ namespace Services
             personUpdate.CountryID = personUpdateRequest.CountryID;
             personUpdate.DateOfBirth = personUpdateRequest.DateOfBirth;
             
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return ConvertPersonToPersonResopnse(personUpdate);
         }
 
-        public bool DeletePerson(Guid? personID)
+        public async Task<bool> DeletePerson(Guid? personID)
         {
             if (personID == null) throw new ArgumentNullException(nameof(personID));
 
             if (!personID.HasValue) return false;
 
-            var person = _db.Persons.FirstOrDefault(temp => temp.PersonID == personID);
+            var person = await _db.Persons.FirstOrDefaultAsync(temp => temp.PersonID == personID);
             
             if (person == null) return false;
 
             _db.Persons.Remove(person);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return true;
         }
     }
