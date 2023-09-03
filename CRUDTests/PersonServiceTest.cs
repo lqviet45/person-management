@@ -1,14 +1,13 @@
 ﻿using Entities;
+using EntityFrameworkCoreMock;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Services;
-using System.Collections.ObjectModel;
-using System.Runtime.ConstrainedExecution;
 using Xunit;
 using Xunit.Abstractions;
+using Moq;
 
 namespace CRUDTests
 {
@@ -20,11 +19,23 @@ namespace CRUDTests
 
         public PersonServiceTest(ITestOutputHelper testOutputHelper)
         {
-            _countriesService = new CountriesService(new
-                PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options));
+            var countriesInitialData = new List<Country>() { };
+            var personsInitialData = new List<Person>() { };
 
-            _personServices = new PersonService(new 
-                PersonsDbContext(new DbContextOptionsBuilder<PersonsDbContext>().Options), _countriesService);
+
+            DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
+                    new DbContextOptionsBuilder<ApplicationDbContext>().Options
+                );
+
+            ApplicationDbContext dbContext = dbContextMock.Object;
+
+            dbContextMock.CreateDbSetMock(temp => temp.Countries, countriesInitialData);
+
+            dbContextMock.CreateDbSetMock(temp => temp.Persons, personsInitialData);
+
+            _countriesService = new CountriesService(dbContext);          
+            _personServices = new PersonService(dbContext, _countriesService);
+
             _outputHelper = testOutputHelper;
         }
 
