@@ -6,15 +6,18 @@ using Services;
 using Xunit;
 using EntityFrameworkCoreMock;
 using Moq;
+using AutoFixture;
 
 namespace CRUDTests
 {
     public class CountriesServiceTest
     {
         private readonly ICountriesService _countriesService;
+        private readonly IFixture _fixture;
 
         public CountriesServiceTest()
         {
+            _fixture = new Fixture();
             var countriesInitialData = new List<Country>() { };
 
             DbContextMock<ApplicationDbContext> dbContextMock = new DbContextMock<ApplicationDbContext>(
