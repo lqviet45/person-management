@@ -29,8 +29,7 @@ namespace CRUDExample.Controllers
                 { nameof(PersonResponse.Name), "Person Name" },
                 { nameof(PersonResponse.Email), "Email" },
                 { nameof(PersonResponse.DateOfBirth), "Date Of Birth" },
-                { nameof(PersonResponse.Gender), "Gender" },
-                { nameof(PersonResponse.CountryID), "Country" }
+                { nameof(PersonResponse.Gender), "Gender" }
             };
 
             List<PersonResponse> personList = await _personServices.GetFilteredPersons(searchBy, searchString);
