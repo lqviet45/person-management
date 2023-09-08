@@ -6,8 +6,8 @@ namespace Services.Helpers
     {
         internal static void ModelValidation(object obj)
         {
-            ValidationContext validationContext = new ValidationContext(obj);
-            List<ValidationResult> validationResults = new List<ValidationResult>();
+            ValidationContext validationContext = new(obj);
+            List<ValidationResult> validationResults = new();
 
             var isValid = Validator.TryValidateObject(obj,
                             validationContext, validationResults, true);

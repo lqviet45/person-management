@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 
 namespace Repositories
 {
