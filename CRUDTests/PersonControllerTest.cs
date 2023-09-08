@@ -5,6 +5,8 @@ using PersonManagement.Controllers;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Services;
 
 namespace PersonManagementTest
 {
@@ -12,15 +14,17 @@ namespace PersonManagementTest
     {
         private readonly IPersonServices _personServices;
         private readonly ICountriesService _countriesService;
+        private readonly ILogger<PersonsController> _logger;
 
         private readonly Mock<IPersonServices> _mockPeopleService;
         private readonly Mock<ICountriesService> _mockCountriesService;
 
         private readonly IFixture _fixture;
 
-        public PersonControllerTest()
+        public PersonControllerTest(ILogger<PersonsController> logger)
         {
             _fixture = new Fixture();
+            _logger = logger;
 
             _mockCountriesService = new Mock<ICountriesService>();
             _mockPeopleService = new Mock<IPersonServices>();
@@ -37,7 +41,7 @@ namespace PersonManagementTest
             List<PersonResponse> persons_response_list =
                 _fixture.Create<List<PersonResponse>>();
 
-            PersonsController personsController = new PersonsController(_personServices, _countriesService);
+            PersonsController personsController = new PersonsController(_personServices, _countriesService, _logger);
 
             _mockPeopleService.Setup(temp => temp.GetFilteredPersons(It.IsAny<string>(), It.IsAny<string>()))
                 .ReturnsAsync(persons_response_list);
@@ -71,7 +75,7 @@ namespace PersonManagementTest
 
             List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
 
-            PersonsController personsController = new PersonsController(_personServices, _countriesService);
+            PersonsController personsController = new PersonsController(_personServices, _countriesService, _logger);
 
             _mockCountriesService.Setup(temp => temp.GetAllCountries())
                 .ReturnsAsync(countries);
@@ -100,7 +104,7 @@ namespace PersonManagementTest
 
             List<CountryResponse> countries = _fixture.Create<List<CountryResponse>>();
 
-            PersonsController personsController = new PersonsController(_personServices, _countriesService);
+            PersonsController personsController = new PersonsController(_personServices, _countriesService, _logger);
 
             _mockCountriesService.Setup(temp => temp.GetAllCountries())
                 .ReturnsAsync(countries);

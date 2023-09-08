@@ -7,6 +7,7 @@ using Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
+builder.Services.AddMvc();
 
 //add services into IoC container
 builder.Services.AddScoped<ICountriesService, CountriesService>();
@@ -27,6 +28,7 @@ if (builder.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 }
 
+app.UseHttpLogging();
 app.UseStaticFiles();
 app.UseRouting();
 app.MapControllers();

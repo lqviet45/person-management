@@ -46,14 +46,14 @@ namespace Services
             Person person = personAddRequest.ToPerson();
             person.PersonID = Guid.NewGuid();
 
-            await _personsRepository.AddPerson(person);           
-            //_db.Sp_InsertPerson(person);
+            await _personsRepository.AddPerson(person);
 
             return ConvertPersonToPersonResopnse(person);
         }
 
         public async Task<List<PersonResponse>> GetAllPersons()
         {
+            _logger.LogInformation("GetAllPersons of PersonsService");
             var personList = await _personsRepository.GetAllPersons();
             return personList
                 .Select(person => ConvertPersonToPersonResopnse(person)).ToList();
@@ -74,6 +74,7 @@ namespace Services
 
         public async Task<List<PersonResponse>> GetFilteredPersons(string searchBy, string? searchString)
         {
+            _logger.LogInformation("GetFilteredPersons of PersonsService");
             if (string.IsNullOrEmpty(searchString)) searchString = string.Empty;
             List<Person> persons = searchBy switch
             {
@@ -101,6 +102,7 @@ namespace Services
 
         public List<PersonResponse> GetSortedPersons(List<PersonResponse> allPersons, string sortBy, SortOrderOptions sortOrder)
         {
+            _logger.LogInformation("GetSortedPersons of PersonsService");
             if (string.IsNullOrEmpty(sortBy))
                 return allPersons;
 

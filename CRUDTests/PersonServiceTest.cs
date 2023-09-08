@@ -14,6 +14,7 @@ using AutoFixture;
 using RepositoryContracts;
 using System.Runtime.ConstrainedExecution;
 using System.Linq.Expressions;
+using Microsoft.Extensions.Logging;
 
 namespace CRUDTests
 {
@@ -31,9 +32,11 @@ namespace CRUDTests
         private readonly ITestOutputHelper _outputHelper;
         private readonly IFixture _fixture;
 
-        public PersonServiceTest(ITestOutputHelper testOutputHelper)
+        private readonly ILogger<PersonService> _logger;
+        public PersonServiceTest(ITestOutputHelper testOutputHelper, ILogger<PersonService> logger)
         {
             _fixture = new Fixture();
+            _logger = logger;
 
             _personRepositoryMock = new Mock<IPersonsRepository>();
             _personsRepository = _personRepositoryMock.Object;
@@ -42,7 +45,7 @@ namespace CRUDTests
             _countriesRepository = _countriesRepositoryMock.Object;
 
             _countriesService = new CountriesService(_countriesRepository);
-            _personServices = new PersonService(_personsRepository, _countriesService);
+            _personServices = new PersonService(_personsRepository, _countriesService, _logger);
 
             _outputHelper = testOutputHelper;
         }
