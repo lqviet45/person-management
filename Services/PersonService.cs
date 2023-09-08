@@ -1,5 +1,6 @@
 ﻿using Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using RepositoryContracts;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -12,11 +13,14 @@ namespace Services
     {
         private readonly IPersonsRepository _personsRepository;
         private readonly ICountriesService _countriesService;
+        private readonly ILogger<PersonService> _logger;
 
-        public PersonService(IPersonsRepository personsRepository, ICountriesService countriesService)
+        public PersonService(IPersonsRepository personsRepository, ICountriesService countriesService
+            , ILogger<PersonService> logger)
         {
             _personsRepository = personsRepository;
             _countriesService = countriesService;
+            _logger = logger;
         }
 
         private PersonResponse ConvertPersonToPersonResopnse(Person person)
@@ -70,7 +74,7 @@ namespace Services
 
         public async Task<List<PersonResponse>> GetFilteredPersons(string searchBy, string? searchString)
         {
-            if (string.IsNullOrEmpty(searchString)) searchString = "";
+            if (string.IsNullOrEmpty(searchString)) searchString = string.Empty;
             List<Person> persons = searchBy switch
             {
                 nameof(PersonResponse.Name) =>

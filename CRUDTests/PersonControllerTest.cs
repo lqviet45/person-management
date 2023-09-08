@@ -1,7 +1,7 @@
 ﻿using AutoFixture;
 using Moq;
 using ServiceContracts;
-using CRUDExample.Controllers;
+using PersonManagement.Controllers;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 using Microsoft.AspNetCore.Mvc;

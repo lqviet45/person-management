@@ -4,18 +4,21 @@ using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
 
-namespace CRUDExample.Controllers
+namespace PersonManagement.Controllers
 {
     [Route("persons")]
     public class PersonsController : Controller
     {
-
+        private readonly ILogger<PersonsController> _logger;
         private readonly IPersonServices _personServices;
         private readonly ICountriesService _countriesService;
-        public PersonsController(IPersonServices personService, ICountriesService countriesService) 
+
+        public PersonsController(IPersonServices personService, ICountriesService countriesService
+            , ILogger<PersonsController> logger) 
         {
             _personServices = personService;
             _countriesService = countriesService;
+            _logger = logger;
         }
 
         [Route("index")]
@@ -23,6 +26,9 @@ namespace CRUDExample.Controllers
         public async Task<IActionResult> Index(string searchBy, string? searchString,
             string sortBy = nameof(PersonResponse.Name), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
+            _logger.LogInformation("Index action method of PersonsController");
+
+            _logger.LogDebug($"searchBy: {searchBy}, searchString: {searchString}, sortBy: {sortOrder}");
             //Searching
             ViewBag.SearchFields = new Dictionary<string, string>()
             {
