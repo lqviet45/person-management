@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using PersonManagement.Filters.ActionFilters;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -23,6 +24,7 @@ namespace PersonManagement.Controllers
 
         [Route("index")]
         [Route("/")]
+        [TypeFilter(typeof(PersonListActionFilter))]
         public async Task<IActionResult> Index(string searchBy, string? searchString,
             string sortBy = nameof(PersonResponse.Name), SortOrderOptions sortOrder = SortOrderOptions.ASC)
         {
